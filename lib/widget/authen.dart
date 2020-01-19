@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ungtravel/utility/my_style.dart';
+import 'package:ungtravel/utility/normal_dialog.dart';
 import 'package:ungtravel/widget/register.dart';
+import 'package:ungtravel/widget/travel.dart';
 
 class Authen extends StatefulWidget {
   @override
@@ -9,6 +12,7 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   // Field
+  String user = '', password = '';
 
   // Method
   Widget signInButton() {
@@ -18,8 +22,26 @@ class _AuthenState extends State<Authen> {
         'Sign In',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {},
+      onPressed: () {
+        checkAuthen();
+      },
     );
+  }
+
+  Future<void> checkAuthen() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .signInWithEmailAndPassword(email: user, password: password)
+        .then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext buildContext) => Travel());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      normalDialog(context, title, message);
+    });
   }
 
   Widget signUpButton() {
@@ -31,9 +53,11 @@ class _AuthenState extends State<Authen> {
       onPressed: () {
         print('You Click Sign Up');
 
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext buildContext){return Register();});
+        MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext buildContext) {
+          return Register();
+        });
         Navigator.of(context).push(materialPageRoute);
-
       },
     );
   }
@@ -55,6 +79,9 @@ class _AuthenState extends State<Authen> {
     return Container(
       width: 250.0,
       child: TextField(
+        onChanged: (String string) {
+          user = string.trim();
+        },
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           enabledBorder: UnderlineInputBorder(
@@ -74,6 +101,9 @@ class _AuthenState extends State<Authen> {
     return Container(
       width: 250.0,
       child: TextField(
+        onChanged: (String string) {
+          password = string.trim();
+        },
         obscureText: true,
         decoration: InputDecoration(
           enabledBorder: UnderlineInputBorder(
@@ -108,7 +138,8 @@ class _AuthenState extends State<Authen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: RadialGradient(radius: 1.0,
+          gradient: RadialGradient(
+            radius: 1.0,
             colors: <Color>[Colors.white, MyStyle().mainColor],
           ),
         ),

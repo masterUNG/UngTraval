@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "212541351090",
+    "firebase_url": "https://ungtravel-a7e7b.firebaseio.com",
+    "project_id": "ungtravel-a7e7b",
+    "storage_bucket": "ungtravel-a7e7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212541351090:android:370dc5906c1986f43dd5ab",
+        "android_client_info": {
+          "package_name": "com.flutterthailand.ungtravel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212541351090-233b7u51qbjos3rvifq2eaa54ib953c8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxSBVQK4YhrLJGqoG8zWvyCPcIzhZ84aY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212541351090-233b7u51qbjos3rvifq2eaa54ib953c8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
