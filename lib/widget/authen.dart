@@ -15,6 +15,21 @@ class _AuthenState extends State<Authen> {
   String user = '', password = '';
 
   // Method
+
+  @override
+  void initState(){
+    super.initState();
+    checkStatus();
+  }
+
+  Future<void> checkStatus()async{
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    if (firebaseUser != null) {
+      routeToTravel();
+    }
+  }
+
   Widget signInButton() {
     return RaisedButton(
       color: MyStyle().textColor,
@@ -33,15 +48,19 @@ class _AuthenState extends State<Authen> {
     await firebaseAuth
         .signInWithEmailAndPassword(email: user, password: password)
         .then((response) {
-      MaterialPageRoute materialPageRoute =
-          MaterialPageRoute(builder: (BuildContext buildContext) => Travel());
-      Navigator.of(context).pushAndRemoveUntil(
-          materialPageRoute, (Route<dynamic> route) => false);
+      routeToTravel();
     }).catchError((response) {
       String title = response.code;
       String message = response.message;
       normalDialog(context, title, message);
     });
+  }
+
+  void routeToTravel() {
+    MaterialPageRoute materialPageRoute =
+        MaterialPageRoute(builder: (BuildContext buildContext) => Travel());
+    Navigator.of(context).pushAndRemoveUntil(
+        materialPageRoute, (Route<dynamic> route) => false);
   }
 
   Widget signUpButton() {

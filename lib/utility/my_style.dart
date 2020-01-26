@@ -13,6 +13,14 @@ class MyStyle {
     fontSize: 30.0,
   );
 
+  TextStyle h1WhiteText = TextStyle(
+    fontFamily: 'Lobster',
+    color: Colors.white,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.bold,
+    fontSize: 30.0,
+  );
+
   TextStyle h2Text = TextStyle(
     fontFamily: 'Lobster',
     color: Color.fromARGB(0xff, 0x00, 0x3d, 0x33),
