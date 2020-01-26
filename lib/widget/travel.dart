@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ungtravel/utility/my_style.dart';
+import 'package:ungtravel/widget/home_lisview.dart';
+import 'package:ungtravel/widget/information.dart';
 
 class Travel extends StatefulWidget {
   @override
@@ -10,7 +14,8 @@ class Travel extends StatefulWidget {
 
 class _TravelState extends State<Travel> {
   // Field
-  String name = '', email = '', uid;
+  String name = '', email = '', uid, url;
+  Widget currentWidget = HomeListView();
 
   // Method
   @override
@@ -19,19 +24,21 @@ class _TravelState extends State<Travel> {
     findUID();
   }
 
-  Future<void> findUID()async{
+  Future<void> findUID() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     uid = firebaseUser.uid;
-    email = firebaseUser.email;
+    setState(() {
+      email = firebaseUser.email;
+    });
     print('uid = $uid, email = $email');
     findName();
   }
 
-  Future<void> findName()async{
+  Future<void> findName() async {
     Firestore firestore = Firestore.instance;
     CollectionReference collectionReference = firestore.collection('Travel');
-    await collectionReference.snapshots().listen((response){
+    await collectionReference.snapshots().listen((response) {
       List<DocumentSnapshot> documentSnapshots = response.documents;
       for (var snapshot in documentSnapshots) {
         // String name = snapshot.data['Name'];
@@ -39,10 +46,12 @@ class _TravelState extends State<Travel> {
 
         String myUID = snapshot.data['Uid'];
         if (myUID == uid) {
-          name = snapshot.data['Name'];
+          setState(() {
+            name = snapshot.data['Name'];
+            url = snapshot.data['Url'];
+          });
           print('name = $name');
         }
-
       }
     });
   }
@@ -51,8 +60,12 @@ class _TravelState extends State<Travel> {
     return Container(
       width: 80.0,
       height: 80.0,
-      child: Image.asset('images/logo.png'),
+      child: url == null ?Image.asset('images/logo.png') : showAvatarFromFirebase(),
     );
+  }
+
+  Widget showAvatarFromFirebase(){
+    return CircleAvatar(backgroundImage: NetworkImage(url),);
   }
 
   Widget headDrawer() {
@@ -88,6 +101,12 @@ class _TravelState extends State<Travel> {
       leading: Icon(Icons.filter_1),
       title: Text('Home ListView'),
       subtitle: Text('Description for Header'),
+      onTap: () {
+        setState(() {
+          currentWidget = HomeListView();
+        });
+        Navigator.of(context).pop();
+      },
     );
   }
 
@@ -96,16 +115,38 @@ class _TravelState extends State<Travel> {
       leading: Icon(Icons.filter_2),
       title: Text('Information'),
       subtitle: Text('Description for Header'),
+      onTap: () {
+        setState(() {
+          currentWidget = Informaion();
+        });
+        Navigator.of(context).pop();
+      },
     );
   }
 
   Widget signOutMenu() {
     Color color = Colors.red;
     return ListTile(
-      leading: Icon(Icons.exit_to_app, color: color,),
-      title: Text('Sign Out', style: TextStyle(color: color),),
+      leading: Icon(
+        Icons.exit_to_app,
+        color: color,
+      ),
+      title: Text(
+        'Sign Out',
+        style: TextStyle(color: color),
+      ),
       subtitle: Text('Description for Header'),
+      onTap: () {
+        processSignOut();
+      },
     );
+  }
+
+  Future<void> processSignOut()async{
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut().then((response){
+      exit(0);
+    });
   }
 
   @override
@@ -116,6 +157,7 @@ class _TravelState extends State<Travel> {
         title: Text('Travel'),
       ),
       drawer: showDrawer(),
+      body: currentWidget,
     );
   }
 }
