@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ungtravel/utility/my_style.dart';
+import 'package:ungtravel/utility/normal_dialog.dart';
 import 'package:ungtravel/widget/home_lisview.dart';
 import 'package:ungtravel/widget/information.dart';
 
@@ -21,7 +23,37 @@ class _TravelState extends State<Travel> {
   @override
   void initState() {
     super.initState();
+    checkMessage();
     findUID();
+  }
+
+  Future<void> checkMessage() async {
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+    String token = await firebaseMessaging.getToken();
+    print('token = $token');
+
+    firebaseMessaging.configure(
+      onLaunch: (Map<String, dynamic> map) async {
+         normalDialog(context, 'OnLaunch', 'OnLaunch');
+        print('mapOnLaunch = $map');
+      },
+      onMessage: (Map<String, dynamic> map) async {
+
+        var message = map['notification'];
+        String title = message['title'];
+        String detail = message['body'];
+
+        normalDialog(context, title, detail);
+        print('mapOnMessage = $map');
+      },
+      onResume: (Map<String, dynamic> map) async {
+        normalDialog(context, 'OnResume', 'OnResume');
+        print('mapOnResume = $map');
+      },
+      onBackgroundMessage: (Map<String, dynamic> map) async {
+        print('mapOnBack = $map');
+      },
+    );
   }
 
   Future<void> findUID() async {

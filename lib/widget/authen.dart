@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ungtravel/utility/my_style.dart';
 import 'package:ungtravel/utility/normal_dialog.dart';
@@ -17,12 +18,15 @@ class _AuthenState extends State<Authen> {
   // Method
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
+    
     checkStatus();
   }
 
-  Future<void> checkStatus()async{
+  
+
+  Future<void> checkStatus() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     if (firebaseUser != null) {
@@ -59,8 +63,8 @@ class _AuthenState extends State<Authen> {
   void routeToTravel() {
     MaterialPageRoute materialPageRoute =
         MaterialPageRoute(builder: (BuildContext buildContext) => Travel());
-    Navigator.of(context).pushAndRemoveUntil(
-        materialPageRoute, (Route<dynamic> route) => false);
+    Navigator.of(context)
+        .pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
   }
 
   Widget signUpButton() {
