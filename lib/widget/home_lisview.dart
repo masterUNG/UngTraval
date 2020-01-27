@@ -21,6 +21,12 @@ class _HomeListViewState extends State<HomeListView> {
   }
 
   Future<void> readAllData() async {
+    if (travelModels.length != 0) {
+      travelModels.removeWhere((TravelModel travelModel) {
+        return travelModel != null;
+      });
+    }
+
     Firestore firestore = Firestore.instance;
     CollectionReference collectionReference = firestore.collection('Travel');
     await collectionReference.snapshots().listen((response) {
@@ -130,7 +136,12 @@ class _HomeListViewState extends State<HomeListView> {
                       MaterialPageRoute(builder: (BuildContext buildContext) {
                     return AddTravel();
                   });
-                  Navigator.of(context).push(materialPageRoute);
+                  Navigator.of(context)
+                      .push(materialPageRoute)
+                      .then((response) {
+                    print('You Back Home ListView');
+                    readAllData();
+                  });
                 },
               ),
             ),
